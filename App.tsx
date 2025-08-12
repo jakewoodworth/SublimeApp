@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import type { Avatar, Goal, Habit, Milestone, TimeBlock, Quest } from './types';
 import Header from './components/Header';
-import Dashboard from './components/Dashboard';
+import Progress from './components/Progress';
 import HabitTracker from './components/HabitTracker';
 import GoalTracker from './components/GoalTracker';
 import ScheduleManager from './components/ScheduleManager';
@@ -92,7 +92,7 @@ const App: React.FC = () => {
     const [isSuggestingHabits, setIsSuggestingHabits] = useState<boolean>(false);
     const [isSuggestingQuests, setIsSuggestingQuests] = useState<boolean>(false);
     const [activeQuestId, setActiveQuestId] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<'habits' | 'goals' | 'schedule' | 'quests' | 'explorer'>('habits');
+    const [activeTab, setActiveTab] = useState<'habits' | 'goals' | 'schedule' | 'quests' | 'progress'>('habits');
     const [suggestionTarget, setSuggestionTarget] = useState<string>('');
 
     // --- Experience & Leveling ---
@@ -459,9 +459,9 @@ const App: React.FC = () => {
                         className="w-full md:w-1/2 bg-gray-800 border border-gray-700 rounded-md py-2 px-3 text-white"
                     />
                 </div>
-                {activeTab === 'explorer' && (
+                {activeTab === 'progress' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-                        <Dashboard avatar={avatar} />
+                        <Progress avatar={avatar} />
                     </div>
                 )}
 
@@ -577,13 +577,13 @@ const App: React.FC = () => {
                     <span>Quests</span>
                 </button>
                 <button
-                    onClick={() => setActiveTab('explorer')}
-                    className={`flex-1 flex flex-col items-center gap-1 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'explorer' ? 'text-white' : ''}`}
-                    aria-label="Explorer"
-                    aria-current={activeTab === 'explorer' ? 'page' : undefined}
+                    onClick={() => setActiveTab('progress')}
+                    className={`flex-1 flex flex-col items-center gap-1 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'progress' ? 'text-white' : ''}`}
+                    aria-label="Progress"
+                    aria-current={activeTab === 'progress' ? 'page' : undefined}
                 >
-                    <span className="text-xl" aria-hidden="true">🧭</span>
-                    <span>Explorer</span>
+                    <span className="text-xl" aria-hidden="true">📈</span>
+                    <span>Progress</span>
                 </button>
             </nav>
         </div>
