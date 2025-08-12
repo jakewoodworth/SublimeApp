@@ -1,16 +1,15 @@
 // A service worker for caching app assets to enable offline functionality.
 
-const CACHE_NAME = 'sublimequest-cache-v1';
-// These are the core files for the app shell.
-// Other assets (JS modules, etc.) will be cached on-the-fly by the fetch handler.
+const CACHE_NAME = 'sublimequest-cache-v2';
+// Core files for the app shell. External CDN assets are intentionally
+// excluded to avoid install failures when offline; they'll be fetched
+// on demand and cached at runtime by the fetch handler.
 const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
-  'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap',
 ];
 
 // Install event: opens a cache and adds the core app shell files to it.
@@ -37,28 +36,29 @@ self.addEventListener('fetch', (event) => {
   }
   
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Cache hit: return the response from the cache.
-        if (response) {
-          return response;
-        }
+    caches.match(event.request).then((response) => {
+      // Cache hit: return the response from the cache.
+      if (response) {
+        return response;
+      }
 
-        // Not in cache: fetch from the network.
-        return fetch(event.request).then(
-          (response) => {
-            // If the response is valid, cache it for future use.
-            if (response && response.status === 200 && (response.type === 'basic' || response.type === 'cors')) {
-              const responseToCache = response.clone();
-              caches.open(CACHE_NAME)
-                .then((cache) => {
-                  cache.put(event.request, responseToCache);
-                });
-            }
-            return response;
+      // Not in cache: fetch from the network and cache it.
+      return fetch(event.request)
+        .then((networkResponse) => {
+          if (
+            networkResponse &&
+            networkResponse.status === 200 &&
+            (networkResponse.type === 'basic' || networkResponse.type === 'cors')
+          ) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
           }
-        );
-      })
+          return networkResponse;
+        })
+        .catch(() => caches.match('/index.html'));
+    })
   );
 });
 
