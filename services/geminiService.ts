@@ -64,8 +64,12 @@ Provide the habits in the specified JSON format.
                 },
             },
         });
-        
-        const jsonText = response.text.trim();
+
+        const jsonText = (response.text || '').trim();
+        if (!jsonText) {
+            console.error('Empty response from Gemini');
+            return [];
+        }
         const result = JSON.parse(jsonText);
         
         return result?.habits || [];
@@ -142,7 +146,11 @@ Provide the quests in the specified JSON format. The quest 'type' must be 'gener
             },
         });
 
-        const jsonText = response.text.trim();
+        const jsonText = (response.text || '').trim();
+        if (!jsonText) {
+            console.error('Empty response from Gemini');
+            return [];
+        }
         const result = JSON.parse(jsonText);
         
         return result?.quests || [];

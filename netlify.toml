@@ -1,3 +1,10 @@
 [build]
 command = "npm run build"
 publish = "dist"
+
+# Ensure SPA routes are served by index.html so the app loads correctly
+# when launched from an installed PWA or any deep link.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
