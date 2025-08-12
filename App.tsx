@@ -92,6 +92,7 @@ const App: React.FC = () => {
     const [isSuggestingHabits, setIsSuggestingHabits] = useState<boolean>(false);
     const [isSuggestingQuests, setIsSuggestingQuests] = useState<boolean>(false);
     const [activeQuestId, setActiveQuestId] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState<'habits' | 'goals' | 'schedule' | 'quests'>('habits');
 
     // --- Experience & Leveling ---
     const addExperience = useCallback((xp: number) => {
@@ -446,75 +447,91 @@ const App: React.FC = () => {
                 />
             )}
             <Header sublimePoints={sublimePoints} />
-            <main className="p-4 md:p-8 max-w-7xl mx-auto">
+            <main className="p-4 md:p-8 max-w-7xl mx-auto pb-24">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
                    <Dashboard avatar={avatar} />
                 </div>
-                
-                <section id="habits" className="mb-12">
-                   <HabitTracker 
-                        habits={habits}
-                        onToggleHabit={(habitId) => handleToggleHabit(habitId, getTodayString())}
-                        onAddHabit={handleAddHabit}
-                        onUpdateHabit={handleUpdateHabit}
-                        onDeleteHabit={handleDeleteHabit}
-                        onSuggestHabits={handleSuggestHabits}
-                        isSuggesting={isSuggestingHabits}
-                        today={getTodayString()}
-                    />
-                </section>
-                
-                <section id="goals" className="mb-12">
-                   <GoalTracker
-                        id="goals"
-                        title="Long-Term Goals"
-                        themeColor="purple"
-                        goals={goals} 
-                        onAddGoal={handleAddGoal}
-                        onToggleMilestone={handleToggleMilestone}
-                        onUpdateGoal={handleUpdateGoal}
-                        onDeleteGoal={handleDeleteGoal}
-                    />
-                </section>
 
-                <section id="short-term-goals" className="mb-12">
-                   <GoalTracker
-                        id="short-term-goals"
-                        title="Short-Term Goals"
-                        themeColor="orange"
-                        goals={shortTermGoals} 
-                        onAddGoal={handleAddShortTermGoal}
-                        onToggleMilestone={handleToggleShortTermMilestone}
-                        onUpdateGoal={handleUpdateShortTermGoal}
-                        onDeleteGoal={handleDeleteShortTermGoal}
-                    />
-                </section>
-                
-                <section id="schedule" className="mb-12">
-                   <ScheduleManager 
-                        selectedDate={selectedDate}
-                        setSelectedDate={setSelectedDate}
-                        timeBlocks={timeBlocksByDate[selectedDate] || []} 
-                        onAddTimeBlock={(block) => handleAddTimeBlock(selectedDate, block)}
-                        onUpdateTimeBlock={(block) => handleUpdateTimeBlock(selectedDate, block)}
-                        onDeleteTimeBlock={(blockId) => handleDeleteTimeBlock(selectedDate, blockId)}
-                        onToggleTimeBlock={(blockId) => handleToggleTimeBlock(selectedDate, blockId)}
-                    />
-                </section>
-                
-                <section id="quests" className="mb-12">
-                    <QuestTracker
-                        quests={quests}
-                        onStartQuest={handleStartQuest}
-                        onToggleQuest={handleToggleQuest}
-                        onAddQuest={handleAddQuest}
-                        onUpdateQuest={handleUpdateQuest}
-                        onDeleteQuest={handleDeleteQuest}
-                        onSuggestQuests={handleSuggestQuests}
-                        isSuggesting={isSuggestingQuests}
-                    />
-                </section>
+                {activeTab === 'habits' && (
+                    <section id="habits" className="mb-12">
+                        <HabitTracker
+                            habits={habits}
+                            onToggleHabit={(habitId) => handleToggleHabit(habitId, getTodayString())}
+                            onAddHabit={handleAddHabit}
+                            onUpdateHabit={handleUpdateHabit}
+                            onDeleteHabit={handleDeleteHabit}
+                            onSuggestHabits={handleSuggestHabits}
+                            isSuggesting={isSuggestingHabits}
+                            today={getTodayString()}
+                        />
+                    </section>
+                )}
+
+                {activeTab === 'goals' && (
+                    <>
+                        <section id="goals" className="mb-12">
+                            <GoalTracker
+                                id="goals"
+                                title="Long-Term Goals"
+                                themeColor="purple"
+                                goals={goals}
+                                onAddGoal={handleAddGoal}
+                                onToggleMilestone={handleToggleMilestone}
+                                onUpdateGoal={handleUpdateGoal}
+                                onDeleteGoal={handleDeleteGoal}
+                            />
+                        </section>
+
+                        <section id="short-term-goals" className="mb-12">
+                            <GoalTracker
+                                id="short-term-goals"
+                                title="Short-Term Goals"
+                                themeColor="orange"
+                                goals={shortTermGoals}
+                                onAddGoal={handleAddShortTermGoal}
+                                onToggleMilestone={handleToggleShortTermMilestone}
+                                onUpdateGoal={handleUpdateShortTermGoal}
+                                onDeleteGoal={handleDeleteShortTermGoal}
+                            />
+                        </section>
+                    </>
+                )}
+
+                {activeTab === 'schedule' && (
+                    <section id="schedule" className="mb-12">
+                        <ScheduleManager
+                            selectedDate={selectedDate}
+                            setSelectedDate={setSelectedDate}
+                            timeBlocks={timeBlocksByDate[selectedDate] || []}
+                            onAddTimeBlock={(block) => handleAddTimeBlock(selectedDate, block)}
+                            onUpdateTimeBlock={(block) => handleUpdateTimeBlock(selectedDate, block)}
+                            onDeleteTimeBlock={(blockId) => handleDeleteTimeBlock(selectedDate, blockId)}
+                            onToggleTimeBlock={(blockId) => handleToggleTimeBlock(selectedDate, blockId)}
+                        />
+                    </section>
+                )}
+
+                {activeTab === 'quests' && (
+                    <section id="quests" className="mb-12">
+                        <QuestTracker
+                            quests={quests}
+                            onStartQuest={handleStartQuest}
+                            onToggleQuest={handleToggleQuest}
+                            onAddQuest={handleAddQuest}
+                            onUpdateQuest={handleUpdateQuest}
+                            onDeleteQuest={handleDeleteQuest}
+                            onSuggestQuests={handleSuggestQuests}
+                            isSuggesting={isSuggestingQuests}
+                        />
+                    </section>
+                )}
             </main>
+            <nav className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 text-gray-400 flex justify-around py-2">
+                <button onClick={() => setActiveTab('habits')} className={`flex-1 ${activeTab === 'habits' ? 'text-white' : ''}`}>Habits</button>
+                <button onClick={() => setActiveTab('goals')} className={`flex-1 ${activeTab === 'goals' ? 'text-white' : ''}`}>Goals</button>
+                <button onClick={() => setActiveTab('schedule')} className={`flex-1 ${activeTab === 'schedule' ? 'text-white' : ''}`}>Schedule</button>
+                <button onClick={() => setActiveTab('quests')} className={`flex-1 ${activeTab === 'quests' ? 'text-white' : ''}`}>Quests</button>
+            </nav>
         </div>
     );
 };
