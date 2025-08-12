@@ -30,5 +30,27 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, Dispatch<S
         }
     }, [key, value]);
 
+    useEffect(() => {
+        const handleStorage = (event: StorageEvent) => {
+            if (event.key !== key) {
+                return;
+            }
+            if (event.newValue) {
+                try {
+                    setValue(JSON.parse(event.newValue));
+                } catch (e) {
+                    console.error("Failed to parse localStorage value", e);
+                }
+            } else {
+                setValue(initialValue);
+            }
+        };
+
+        window.addEventListener('storage', handleStorage);
+        return () => {
+            window.removeEventListener('storage', handleStorage);
+        };
+    }, [key, initialValue]);
+
     return [value, setValue];
 }
