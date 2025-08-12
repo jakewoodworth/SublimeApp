@@ -39,7 +39,7 @@ const TimeBlockModal: React.FC<{
     onClose: () => void;
     onDelete?: (id: string) => void;
 }> = ({ block, onSave, onClose, onDelete }) => {
-    const [editedBlock, setEditedBlock] = useState(block);
+    const [editedBlock, setEditedBlock] = useState(() => structuredClone(block));
     const isEditing = 'id' in block;
 
     const handleSubmit = (e: React.FormEvent) => {
