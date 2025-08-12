@@ -1,11 +1,15 @@
 import React from 'react';
 import { RocketIcon } from './IconComponents';
 
+type Tab = 'habits' | 'goals' | 'schedule' | 'quests' | 'progress';
+
 interface HeaderProps {
     sublimePoints: number;
+    activeTab: Tab;
+    onTabChange: (tab: Tab) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ sublimePoints }) => {
+const Header: React.FC<HeaderProps> = ({ sublimePoints, activeTab, onTabChange }) => {
     return (
         <header className="py-3 px-4 md:px-8 flex justify-between items-center bg-gray-900/50 backdrop-blur-md border-b border-gray-700/50 sticky top-0 z-10">
             <div className="flex items-center gap-2 md:gap-3">
@@ -14,11 +18,36 @@ const Header: React.FC<HeaderProps> = ({ sublimePoints }) => {
             </div>
             <div className="flex items-center gap-4">
                 <nav className="hidden md:flex gap-6 text-gray-300">
-                    <a href="#habits" className="hover:text-cyan-400 transition-colors">Habits</a>
-                    <a href="#goals" className="hover:text-cyan-400 transition-colors">Long-Term Goals</a>
-                    <a href="#short-term-goals" className="hover:text-cyan-400 transition-colors">Short-Term Goals</a>
-                    <a href="#schedule" className="hover:text-cyan-400 transition-colors">Schedule</a>
-                    <a href="#quests" className="hover:text-cyan-400 transition-colors">Quests</a>
+                    <button
+                        onClick={() => onTabChange('progress')}
+                        className={`hover:text-cyan-400 transition-colors ${activeTab === 'progress' ? 'text-white' : ''}`}
+                    >
+                        Progress
+                    </button>
+                    <button
+                        onClick={() => onTabChange('habits')}
+                        className={`hover:text-cyan-400 transition-colors ${activeTab === 'habits' ? 'text-white' : ''}`}
+                    >
+                        Habits
+                    </button>
+                    <button
+                        onClick={() => onTabChange('goals')}
+                        className={`hover:text-cyan-400 transition-colors ${activeTab === 'goals' ? 'text-white' : ''}`}
+                    >
+                        Goals
+                    </button>
+                    <button
+                        onClick={() => onTabChange('schedule')}
+                        className={`hover:text-cyan-400 transition-colors ${activeTab === 'schedule' ? 'text-white' : ''}`}
+                    >
+                        Schedule
+                    </button>
+                    <button
+                        onClick={() => onTabChange('quests')}
+                        className={`hover:text-cyan-400 transition-colors ${activeTab === 'quests' ? 'text-white' : ''}`}
+                    >
+                        Quests
+                    </button>
                 </nav>
                 <div className="bg-yellow-400/10 border border-yellow-400/50 text-yellow-300 text-base md:text-lg font-semibold px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center gap-2">
                     <span>{sublimePoints}</span>
