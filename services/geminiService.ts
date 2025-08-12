@@ -7,6 +7,29 @@ if (!process.env.GEMINI_API_KEY) {
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
+/**
+ * Safely parse JSON text, logging context and the raw text when parsing fails.
+ */
+function safeJsonParse<T>(text: string, context: string): T | null {
+    try {
+        return JSON.parse(text) as T;
+    } catch (error) {
+        console.error(`Non-JSON response for ${context}:`, text, error);
+        return null;
+    }
+}
+
+/**
+ * Retrieve the textual content from a response, supporting both property and
+ * function forms exposed by different libraries.
+ */
+async function getResponseText(response: any): Promise<string | undefined> {
+    if (typeof response.text === 'function') {
+        return await response.text();
+    }
+    return response.text;
+}
+
 const habitSchema = {
     type: Type.OBJECT,
     properties: {
@@ -63,9 +86,11 @@ Provide the habits in the specified JSON format.
             },
         });
         
-        const jsonText = response.text.trim();
-        const result = JSON.parse(jsonText);
-        
+        const rawText = (await getResponseText(response))?.trim();
+        const result = rawText
+            ? safeJsonParse<{ habits: Partial<Habit>[] }>(rawText, 'habit suggestions')
+            : null;
+
         return result?.habits || [];
 
     } catch (error) {
@@ -140,9 +165,11 @@ Provide the quests in the specified JSON format. The quest 'type' must be 'gener
             },
         });
 
-        const jsonText = response.text.trim();
-        const result = JSON.parse(jsonText);
-        
+        const rawText = (await getResponseText(response))?.trim();
+        const result = rawText
+            ? safeJsonParse<{ quests: Omit<Quest, 'id' | 'completed'>[] }>(rawText, 'quest suggestions')
+            : null;
+
         return result?.quests || [];
 
     } catch (error) {
