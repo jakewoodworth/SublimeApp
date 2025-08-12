@@ -33,13 +33,28 @@ const blockTypeColors: Record<TimeBlockType, { bg: string; border: string; text:
 
 const hours = Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, i) => START_HOUR + i);
 
+/**
+ * Deeply clone an object in a way that's compatible with older browsers.
+ * Safari versions prior to 15.4 don't support `structuredClone`, so we
+ * fall back to JSON serialization which is sufficient for the simple
+ * objects used in the schedule manager.
+ */
+const deepClone = <T,>(value: T): T => {
+    // Use native structuredClone when available
+    if (typeof structuredClone === 'function') {
+        return structuredClone(value);
+    }
+    // Fallback for environments without structuredClone (e.g. older iOS Safari)
+    return JSON.parse(JSON.stringify(value));
+};
+
 const TimeBlockModal: React.FC<{
     block: Omit<TimeBlock, 'id'> | TimeBlock;
     onSave: (block: Omit<TimeBlock, 'id'> | TimeBlock) => void;
     onClose: () => void;
     onDelete?: (id: string) => void;
 }> = ({ block, onSave, onClose, onDelete }) => {
-    const [editedBlock, setEditedBlock] = useState(() => structuredClone(block));
+    const [editedBlock, setEditedBlock] = useState(() => deepClone(block));
     const isEditing = 'id' in block;
 
     const handleSubmit = (e: React.FormEvent) => {
