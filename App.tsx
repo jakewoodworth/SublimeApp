@@ -423,6 +423,11 @@ const App: React.FC = () => {
         document.head.appendChild(style);
 
         for(let i = 0; i < 100; i++) { createStar(); }
+
+        return () => {
+            style.remove();
+            starContainer.remove();
+        };
     }, []);
 
     const activeQuest = quests.find(q => q.id === activeQuestId);
