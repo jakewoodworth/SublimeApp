@@ -3,11 +3,11 @@ import type { Avatar } from '../types';
 import QuestCard from './QuestCard';
 import { StarIcon } from './IconComponents';
 
-interface DashboardProps {
+interface ProgressProps {
     avatar: Avatar;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ avatar }) => {
+const Progress: React.FC<ProgressProps> = ({ avatar }) => {
     const progressPercentage = (avatar.currentXP / avatar.xpToNextLevel) * 100;
 
     return (
@@ -24,10 +24,10 @@ const Dashboard: React.FC<DashboardProps> = ({ avatar }) => {
                     </div>
                 </div>
                 <div className="flex-grow w-full text-center md:text-left">
-                    <h2 className="font-orbitron text-xl md:text-2xl text-white mb-2">Explorer Level {avatar.level}</h2>
+                    <h2 className="font-orbitron text-xl md:text-2xl text-white mb-2">Level {avatar.level}</h2>
                     <p className="text-gray-400 mb-4 text-sm md:text-base">Your journey to the sublime continues. Keep up the momentum!</p>
                     <div className="w-full bg-gray-700 rounded-full h-4 overflow-hidden border border-gray-600">
-                        <div 
+                        <div
                             className="bg-gradient-to-r from-cyan-400 to-blue-500 h-full rounded-full transition-all duration-500"
                             style={{ width: `${progressPercentage}%` }}
                         ></div>
@@ -42,4 +42,4 @@ const Dashboard: React.FC<DashboardProps> = ({ avatar }) => {
     );
 };
 
-export default Dashboard;
+export default Progress;
