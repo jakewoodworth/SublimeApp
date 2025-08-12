@@ -448,7 +448,6 @@ const App: React.FC = () => {
                 />
             )}
             <Header
-                sublimePoints={sublimePoints}
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
             />
@@ -464,8 +463,19 @@ const App: React.FC = () => {
                     />
                 </div>
                 {activeTab === 'progress' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-                        <Progress avatar={avatar} />
+                    <div className="mb-8">
+                        <div className="flex justify-end mb-4">
+                            <div className="bg-yellow-400/10 border border-yellow-400/50 text-yellow-300 text-base md:text-lg font-semibold px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center gap-2">
+                                <span className="text-yellow-500">Lv</span>
+                                <span>{avatar.level}</span>
+                                <span>•</span>
+                                <span>{sublimePoints}</span>
+                                <span className="text-yellow-500">SP</span>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <Progress avatar={avatar} />
+                        </div>
                     </div>
                 )}
 
@@ -548,15 +558,6 @@ const App: React.FC = () => {
                 className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 text-gray-400 flex justify-between py-2"
             >
                 <button
-                    onClick={() => setActiveTab('progress')}
-                    className={`flex-1 flex flex-col items-center gap-1 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'progress' ? 'text-white' : ''}`}
-                    aria-label="Progress"
-                    aria-current={activeTab === 'progress' ? 'page' : undefined}
-                >
-                    <span className="text-xl" aria-hidden="true">📈</span>
-                    <span>Progress</span>
-                </button>
-                <button
                     onClick={() => setActiveTab('habits')}
                     className={`flex-1 flex flex-col items-center gap-1 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'habits' ? 'text-white' : ''}`}
                     aria-label="Habits"
@@ -591,6 +592,15 @@ const App: React.FC = () => {
                 >
                     <span className="text-xl" aria-hidden="true">⚔️</span>
                     <span>Quests</span>
+                </button>
+                <button
+                    onClick={() => setActiveTab('progress')}
+                    className={`flex-1 flex flex-col items-center gap-1 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'progress' ? 'text-white' : ''}`}
+                    aria-label="Progress"
+                    aria-current={activeTab === 'progress' ? 'page' : undefined}
+                >
+                    <span className="text-xl" aria-hidden="true">📈</span>
+                    <span>Progress</span>
                 </button>
 
             </nav>
