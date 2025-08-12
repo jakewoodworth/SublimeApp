@@ -545,7 +545,7 @@ const App: React.FC = () => {
             </main>
             <nav
                 style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 0.5rem)' }}
-                className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 text-gray-400 flex justify-around py-2"
+                className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 text-gray-400 flex justify-between py-2"
             >
                 <button
                     onClick={() => setActiveTab('progress')}
