@@ -93,6 +93,7 @@ const App: React.FC = () => {
     const [isSuggestingQuests, setIsSuggestingQuests] = useState<boolean>(false);
     const [activeQuestId, setActiveQuestId] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'habits' | 'goals' | 'schedule' | 'quests' | 'explorer'>('habits');
+    const [suggestionTarget, setSuggestionTarget] = useState<string>('');
 
     // --- Experience & Leveling ---
     const addExperience = useCallback((xp: number) => {
@@ -346,7 +347,7 @@ const App: React.FC = () => {
     const handleSuggestHabits = async () => {
         setIsSuggestingHabits(true);
         try {
-            const suggested = await suggestHabitsForGoals(goals);
+            const suggested = await suggestHabitsForGoals(goals, suggestionTarget);
             const newHabits: Habit[] = suggested.map((s, index) => ({
                 id: `suggested-h-${Date.now()}-${index}`,
                 name: s.name || 'New Habit',
@@ -366,7 +367,7 @@ const App: React.FC = () => {
     const handleSuggestQuests = async () => {
         setIsSuggestingQuests(true);
         try {
-            const suggested = await suggestQuests(goals, habits);
+            const suggested = await suggestQuests(goals, habits, suggestionTarget);
             const newQuests: Quest[] = suggested.map((q, index) => ({
                 id: `q-${Date.now()}-${index}`,
                 ...q,
@@ -448,6 +449,16 @@ const App: React.FC = () => {
             )}
             <Header sublimePoints={sublimePoints} />
             <main className="p-4 md:p-8 max-w-7xl mx-auto pb-24">
+                <div className="mb-8">
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Suggestions for</label>
+                    <input
+                        type="text"
+                        value={suggestionTarget}
+                        onChange={e => setSuggestionTarget(e.target.value)}
+                        placeholder="the user"
+                        className="w-full md:w-1/2 bg-gray-800 border border-gray-700 rounded-md py-2 px-3 text-white"
+                    />
+                </div>
                 {activeTab === 'explorer' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
                         <Dashboard avatar={avatar} />
