@@ -1,11 +1,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { Goal, Habit, Quest } from '../types';
 
-if (!process.env.API_KEY) {
-    console.warn("API_KEY environment variable not set. Gemini features will be disabled.");
+if (!process.env.GEMINI_API_KEY) {
+    console.warn("GEMINI_API_KEY environment variable not set. Gemini features will be disabled.");
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
 const habitSchema = {
     type: Type.OBJECT,
@@ -23,7 +23,7 @@ const habitSchema = {
 };
 
 export const suggestHabitsForGoals = async (goals: Goal[]): Promise<Partial<Habit>[]> => {
-    if (!process.env.API_KEY) {
+    if (!process.env.GEMINI_API_KEY) {
         console.error("Gemini API key is not configured.");
         return [
             { name: "Review Goals Daily", description: "Start each day by reviewing your main objectives." },
@@ -99,7 +99,7 @@ const questSchema = {
 };
 
 export const suggestQuests = async (goals: Goal[], habits: Habit[]): Promise<Omit<Quest, 'id' | 'completed'>[]> => {
-    if (!process.env.API_KEY) {
+    if (!process.env.GEMINI_API_KEY) {
         console.error("Gemini API key is not configured.");
         return [];
     }
