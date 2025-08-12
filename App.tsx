@@ -447,7 +447,11 @@ const App: React.FC = () => {
                     onClose={() => setActiveQuestId(null)}
                 />
             )}
-            <Header sublimePoints={sublimePoints} />
+            <Header
+                sublimePoints={sublimePoints}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+            />
             <main className="p-4 md:p-8 max-w-7xl mx-auto pb-24">
                 <div className="mb-8">
                     <label className="block text-sm font-medium text-gray-300 mb-1">Suggestions for</label>
