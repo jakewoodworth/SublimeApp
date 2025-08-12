@@ -366,8 +366,12 @@ const App: React.FC = () => {
         setIsSuggestingQuests(true);
         try {
             const suggested = await suggestQuests(goals, habits);
-            const newQuests: Omit<Quest, 'id' | 'completed'>[] = suggested;
-            newQuests.forEach(q => handleAddQuest(q));
+            const newQuests: Quest[] = suggested.map((q, index) => ({
+                id: `q-${Date.now()}-${index}`,
+                ...q,
+                completed: false,
+            }));
+            setQuests(prev => [...prev, ...newQuests]);
         } catch (error) {
             console.error("Failed to get quest suggestions:", error);
         } finally {
