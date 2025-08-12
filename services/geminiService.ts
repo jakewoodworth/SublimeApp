@@ -1,11 +1,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { Goal, Habit, Quest } from '../types';
 
-if (!process.env.GEMINI_API_KEY) {
+let ai: GoogleGenAI | undefined;
+
+if (process.env.GEMINI_API_KEY) {
+    ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+} else {
     console.warn("GEMINI_API_KEY environment variable not set. Gemini features will be disabled.");
 }
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
 const habitSchema = {
     type: Type.OBJECT,
@@ -45,7 +47,7 @@ Provide the habits in the specified JSON format.
 `;
 
     try {
-        const response = await ai.models.generateContent({
+        const response = await ai!.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
             config: {
@@ -122,7 +124,7 @@ ${habitDescriptions}
 Provide the quests in the specified JSON format. The quest 'type' must be 'generic'.
 `;
     try {
-        const response = await ai.models.generateContent({
+        const response = await ai!.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
             config: {
