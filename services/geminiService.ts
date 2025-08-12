@@ -24,7 +24,7 @@ const habitSchema = {
     required: ["name", "description"],
 };
 
-export const suggestHabitsForGoals = async (goals: Goal[]): Promise<Partial<Habit>[]> => {
+export const suggestHabitsForGoals = async (goals: Goal[], audience?: string): Promise<Partial<Habit>[]> => {
     if (!process.env.GEMINI_API_KEY) {
         console.error("Gemini API key is not configured.");
         return [
@@ -34,13 +34,14 @@ export const suggestHabitsForGoals = async (goals: Goal[]): Promise<Partial<Habi
     }
 
     const goalDescriptions = goals.map(g => `- ${g.name}: ${g.description}`).join('\n');
+    const target = audience?.trim() || 'the user';
 
     const prompt = `
-Based on the following long-term goals, suggest 3-5 new daily or weekly habits that would help achieve them.
+Based on the following long-term goals, suggest 3-5 new daily or weekly habits that would help ${target} achieve them.
 The habits should be specific, actionable, and small enough to be incorporated into a daily routine.
-Avoid suggesting habits the user might already be doing. Focus on creative or supportive habits.
+Avoid suggesting habits they might already be doing. Focus on creative or supportive habits.
 
-My Goals:
+Goals:
 ${goalDescriptions}
 
 Provide the habits in the specified JSON format.
@@ -104,7 +105,7 @@ const questSchema = {
     required: ["title", "description", "reward", "type"],
 };
 
-export const suggestQuests = async (goals: Goal[], habits: Habit[]): Promise<Omit<Quest, 'id' | 'completed'>[]> => {
+export const suggestQuests = async (goals: Goal[], habits: Habit[], audience?: string): Promise<Omit<Quest, 'id' | 'completed'>[]> => {
     if (!process.env.GEMINI_API_KEY) {
         console.error("Gemini API key is not configured.");
         return [];
@@ -112,17 +113,18 @@ export const suggestQuests = async (goals: Goal[], habits: Habit[]): Promise<Omi
 
     const goalDescriptions = goals.map(g => `- ${g.name}`).join('\n');
     const habitDescriptions = habits.map(h => `- ${h.name}`).join('\n');
+    const target = audience?.trim() || 'the user';
 
     const prompt = `
-Based on the following long-term goals and daily habits, suggest 2-3 unique, one-time "quests".
-A quest should be a specific, short-term challenge that pushes the user slightly beyond their routine to accelerate progress.
+Based on the following long-term goals and daily habits, suggest 2-3 unique, one-time "quests" for ${target}.
+A quest should be a specific, short-term challenge that pushes them slightly beyond their routine to accelerate progress.
 For example, if a goal is 'Learn a new skill', a quest could be 'Complete a 2-hour tutorial on the topic'.
 Avoid suggesting things that are already listed as habits.
 
-My Goals:
+Goals:
 ${goalDescriptions}
 
-My Habits:
+Habits:
 ${habitDescriptions}
 
 Provide the quests in the specified JSON format. The quest 'type' must be 'generic'.
