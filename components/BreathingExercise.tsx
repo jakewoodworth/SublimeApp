@@ -30,24 +30,22 @@ const BreathingExercise: React.FC<BreathingExerciseProps> = ({ quest, onComplete
                 if (prev > 1) {
                     return prev - 1;
                 }
-                
+
                 // Move to next phase
-                setPhaseIndex(currentPhaseIndex => {
-                    const nextPhaseIndex = (currentPhaseIndex + 1) % PHASES.length;
-                    if(nextPhaseIndex === 0) {
-                        setReps(currentReps => {
-                            if(currentReps + 1 >= TOTAL_REPS) {
-                                setIsFinished(true);
-                                clearInterval(timer);
-                                return currentReps + 1;
-                            }
-                            return currentReps + 1;
-                        });
-                    }
-                    setCountdown(PHASES[nextPhaseIndex].duration);
-                    return nextPhaseIndex;
-                });
-                return PHASES[(phaseIndex + 1) % PHASES.length].duration;
+                const nextPhaseIndex = (phaseIndex + 1) % PHASES.length;
+                setPhaseIndex(nextPhaseIndex);
+
+                if (nextPhaseIndex === 0) {
+                    setReps(currentReps => {
+                        if (currentReps + 1 >= TOTAL_REPS) {
+                            setIsFinished(true);
+                            clearInterval(timer);
+                        }
+                        return currentReps + 1;
+                    });
+                }
+
+                return PHASES[nextPhaseIndex].duration;
             });
         }, 1000);
 
