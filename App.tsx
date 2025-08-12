@@ -589,6 +589,7 @@ const App: React.FC = () => {
                     <span className="text-xl" aria-hidden="true">⚔️</span>
                     <span>Quests</span>
                 </button>
+
             </nav>
         </div>
     );
