@@ -15,6 +15,8 @@ const urlsToCache = [
 
 // Install event: opens a cache and adds the core app shell files to it.
 self.addEventListener('install', (event) => {
+  // Activate the new service worker as soon as it's finished installing.
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -72,6 +74,6 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
