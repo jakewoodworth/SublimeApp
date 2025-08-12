@@ -93,7 +93,8 @@ const App: React.FC = () => {
     const [isSuggestingQuests, setIsSuggestingQuests] = useState<boolean>(false);
     const [activeQuestId, setActiveQuestId] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'habits' | 'goals' | 'schedule' | 'quests' | 'progress'>('progress');
-    const [audience, setAudience] = useState<string>('');
+    // Audience description for AI suggestions
+    const [suggestionAudience, setSuggestionAudience] = useState<string>('');
 
     // --- Experience & Leveling ---
     const addExperience = useCallback((xp: number) => {
@@ -347,7 +348,7 @@ const App: React.FC = () => {
     const handleSuggestHabits = async () => {
         setIsSuggestingHabits(true);
         try {
-            const suggested = await suggestHabitsForGoals(goals, audience);
+            const suggested = await suggestHabitsForGoals(goals, suggestionAudience);
             const newHabits: Habit[] = suggested.map((s, index) => ({
                 id: `suggested-h-${Date.now()}-${index}`,
                 name: s.name || 'New Habit',
@@ -367,7 +368,7 @@ const App: React.FC = () => {
     const handleSuggestQuests = async () => {
         setIsSuggestingQuests(true);
         try {
-            const suggested = await suggestQuests(goals, habits, audience);
+            const suggested = await suggestQuests(goals, habits, suggestionAudience);
             const newQuests: Quest[] = suggested.map((q, index) => ({
                 id: `q-${Date.now()}-${index}`,
                 ...q,
@@ -455,8 +456,8 @@ const App: React.FC = () => {
                             <label className="block text-sm font-medium text-gray-300 mb-1">Suggestions for</label>
                             <input
                                 type="text"
-                                value={audience}
-                                onChange={e => setAudience(e.target.value)}
+                                value={suggestionAudience}
+                                onChange={e => setSuggestionAudience(e.target.value)}
                                 placeholder="the user"
                                 className="w-full md:w-1/2 bg-gray-800 border border-gray-700 rounded-md py-2 px-3 text-white"
                             />
