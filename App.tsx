@@ -92,7 +92,8 @@ const App: React.FC = () => {
     const [isSuggestingHabits, setIsSuggestingHabits] = useState<boolean>(false);
     const [isSuggestingQuests, setIsSuggestingQuests] = useState<boolean>(false);
     const [activeQuestId, setActiveQuestId] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<'habits' | 'goals' | 'schedule' | 'quests' | 'explorer'>('habits');
+    const [activeTab, setActiveTab] = useState<'habits' | 'goals' | 'schedule' | 'quests' | 'progress'>('progress');
+    const [audience, setAudience] = useState<string>('');
 
     // --- Experience & Leveling ---
     const addExperience = useCallback((xp: number) => {
@@ -346,7 +347,7 @@ const App: React.FC = () => {
     const handleSuggestHabits = async () => {
         setIsSuggestingHabits(true);
         try {
-            const suggested = await suggestHabitsForGoals(goals);
+            const suggested = await suggestHabitsForGoals(goals, audience);
             const newHabits: Habit[] = suggested.map((s, index) => ({
                 id: `suggested-h-${Date.now()}-${index}`,
                 name: s.name || 'New Habit',
@@ -366,7 +367,7 @@ const App: React.FC = () => {
     const handleSuggestQuests = async () => {
         setIsSuggestingQuests(true);
         try {
-            const suggested = await suggestQuests(goals, habits);
+            const suggested = await suggestQuests(goals, habits, audience);
             const newQuests: Quest[] = suggested.map((q, index) => ({
                 id: `q-${Date.now()}-${index}`,
                 ...q,
@@ -448,10 +449,22 @@ const App: React.FC = () => {
             )}
             <Header sublimePoints={sublimePoints} />
             <main className="p-4 md:p-8 max-w-7xl mx-auto pb-24">
-                {activeTab === 'explorer' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-                        <Dashboard avatar={avatar} />
-                    </div>
+                {activeTab === 'progress' && (
+                    <>
+                        <div className="mb-8">
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Suggestions for</label>
+                            <input
+                                type="text"
+                                value={audience}
+                                onChange={e => setAudience(e.target.value)}
+                                placeholder="the user"
+                                className="w-full md:w-1/2 bg-gray-800 border border-gray-700 rounded-md py-2 px-3 text-white"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+                            <Dashboard avatar={avatar} />
+                        </div>
+                    </>
                 )}
 
                 {activeTab === 'habits' && (
@@ -530,6 +543,14 @@ const App: React.FC = () => {
             </main>
             <nav className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 text-gray-400 flex justify-around py-3 text-sm">
                 <button
+                    onClick={() => setActiveTab('progress')}
+                    className={`flex-1 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'progress' ? 'text-white' : ''}`}
+                    aria-label="Progress"
+                    aria-current={activeTab === 'progress' ? 'page' : undefined}
+                >
+                    Progress
+                </button>
+                <button
                     onClick={() => setActiveTab('habits')}
                     className={`flex-1 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'habits' ? 'text-white' : ''}`}
                     aria-label="Habits"
@@ -560,14 +581,6 @@ const App: React.FC = () => {
                     aria-current={activeTab === 'quests' ? 'page' : undefined}
                 >
                     Quests
-                </button>
-                <button
-                    onClick={() => setActiveTab('explorer')}
-                    className={`flex-1 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'explorer' ? 'text-white' : ''}`}
-                    aria-label="Explorer"
-                    aria-current={activeTab === 'explorer' ? 'page' : undefined}
-                >
-                    Explorer
                 </button>
             </nav>
         </div>
