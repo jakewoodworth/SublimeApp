@@ -43,3 +43,4 @@ const Progress: React.FC<ProgressProps> = ({ avatar }) => {
 };
 
 export default Progress;
+

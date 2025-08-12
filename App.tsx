@@ -545,6 +545,15 @@ const App: React.FC = () => {
             </main>
             <nav className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 text-gray-400 flex justify-around py-2">
                 <button
+                    onClick={() => setActiveTab('progress')}
+                    className={`flex-1 flex flex-col items-center gap-1 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'progress' ? 'text-white' : ''}`}
+                    aria-label="Progress"
+                    aria-current={activeTab === 'progress' ? 'page' : undefined}
+                >
+                    <span className="text-xl" aria-hidden="true">📈</span>
+                    <span>Progress</span>
+                </button>
+                <button
                     onClick={() => setActiveTab('habits')}
                     className={`flex-1 flex flex-col items-center gap-1 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'habits' ? 'text-white' : ''}`}
                     aria-label="Habits"
@@ -580,15 +589,7 @@ const App: React.FC = () => {
                     <span className="text-xl" aria-hidden="true">⚔️</span>
                     <span>Quests</span>
                 </button>
-                <button
-                    onClick={() => setActiveTab('progress')}
-                    className={`flex-1 flex flex-col items-center gap-1 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'progress' ? 'text-white' : ''}`}
-                    aria-label="Progress"
-                    aria-current={activeTab === 'progress' ? 'page' : undefined}
-                >
-                    <span className="text-xl" aria-hidden="true">📈</span>
-                    <span>Progress</span>
-                </button>
+
             </nav>
         </div>
     );
