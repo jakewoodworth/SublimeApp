@@ -19,8 +19,8 @@ const timeToMinutes = (time: string): number => {
     return hours * 60 + minutes;
 };
 
-const START_HOUR = 6;
-const END_HOUR = 22;
+const START_HOUR = 5;
+const END_HOUR = 23;
 const TOTAL_MINUTES = (END_HOUR - START_HOUR) * 60;
 
 const blockTypeColors: Record<TimeBlockType, { bg: string; border: string; text: string }> = {
@@ -220,7 +220,7 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ selectedDate, setSele
                     <QuestCard className="p-0 overflow-hidden">
                         <div className="relative h-[600px] overflow-y-auto bg-gray-900/20">
                             {hours.map(hour => (
-                                <div key={hour} className="flex items-start h-[calc(100%/17)] border-b border-blue-400/10">
+                                <div key={hour} className="flex items-start h-[calc(100%/19)] border-b border-blue-400/10">
                                     <span className="text-xs text-gray-500 pt-0.5 ml-2 pr-2 w-14 text-right">{`${hour}:00`}</span>
                                     <div className="w-full h-full border-l border-blue-400/10"></div>
                                 </div>
