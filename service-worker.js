@@ -28,38 +28,43 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Fetch event: serves requests from cache if available, otherwise fetches from network.
+// Fetch event: serve static assets from cache, use network-first for APIs.
 self.addEventListener('fetch', (event) => {
-  // Always go to the network for Gemini API calls.
-  if (event.request.url.includes('generativelanguage.googleapis.com')) {
+  const url = new URL(event.request.url);
+
+  // Network-first strategy for API or cross-origin requests.
+  if (url.origin !== self.location.origin || url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
     return;
   }
-  
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Cache hit: return the response from the cache.
-      if (response) {
-        return response;
-      }
 
-      // Not in cache: fetch from the network and cache it.
-      return fetch(event.request)
-        .then((networkResponse) => {
-          if (
-            networkResponse &&
-            networkResponse.status === 200 &&
-            (networkResponse.type === 'basic' || networkResponse.type === 'cors')
-          ) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-          }
-          return networkResponse;
-        })
-        .catch(() => caches.match('/index.html'));
-    })
-  );
+  // Only cache static assets and navigation requests.
+  if (
+    event.request.mode === 'navigate' ||
+    ['style', 'script', 'image', 'font'].includes(event.request.destination)
+  ) {
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        if (response) {
+          return response;
+        }
+
+        return fetch(event.request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const responseToCache = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, responseToCache);
+              });
+            }
+            return networkResponse;
+          })
+          .catch(() => caches.match('/index.html'));
+      })
+    );
+  }
 });
 
 // Activate event: removes old caches to keep things clean.
