@@ -35,6 +35,11 @@ export interface Quest {
   type: 'breathing' | 'generic';
 }
 
+export interface KnowledgeItem {
+  id: string;
+  content: string;
+}
+
 export type TimeBlockType = 'deep-work' | 'learning' | 'rest' | 'planning' | 'personal';
 
 export interface TimeBlock {

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import type { Avatar, Goal, Habit, TimeBlock, Quest } from './types';
+import type { Avatar, Goal, Habit, TimeBlock, Quest, KnowledgeItem } from './types';
 import Header from './components/Header';
 import Progress from './components/Progress';
 import HabitTracker from './components/HabitTracker';
@@ -8,6 +8,7 @@ import ScheduleManager from './components/ScheduleManager';
 import QuestTracker from './components/QuestTracker';
 import BreathingExercise from './components/BreathingExercise';
 import { suggestHabitsForGoals, suggestQuests } from './services/geminiService';
+import KnowledgeBase from './components/KnowledgeBase';
 import { useLocalStorage } from './hooks/useLocalStorage';
 
 // --- Helpers ---
@@ -88,6 +89,7 @@ const App: React.FC = () => {
     const [shortTermGoals, setShortTermGoals] = useLocalStorage<Goal[]>('sublime_short_term_goals', INITIAL_SHORT_TERM_GOALS);
     const [timeBlocksByDate, setTimeBlocksByDate] = useLocalStorage<Record<string, TimeBlock[]>>('sublime_schedules', INITIAL_TIME_BLOCKS);
     const [quests, setQuests] = useLocalStorage<Quest[]>('sublime_quests', INITIAL_QUESTS);
+    const [knowledgeBase, setKnowledgeBase] = useLocalStorage<KnowledgeItem[]>('sublime_knowledge_base', []);
     
     const [selectedDate, setSelectedDate] = useState<string>(getTodayString());
     const [isSuggestingHabits, setIsSuggestingHabits] = useState<boolean>(false);
@@ -343,11 +345,19 @@ const App: React.FC = () => {
         setQuests(prev => prev.filter(q => q.id !== questId));
     }, [setQuests]);
 
+    const handleAddKnowledge = useCallback((content: string) => {
+        setKnowledgeBase(prev => [...prev, { id: `kb-${Date.now()}`, content }]);
+    }, [setKnowledgeBase]);
+
+    const handleRemoveKnowledge = useCallback((id: string) => {
+        setKnowledgeBase(prev => prev.filter(k => k.id !== id));
+    }, [setKnowledgeBase]);
+
     // --- AI Suggestions ---
     const handleSuggestHabits = async () => {
         setIsSuggestingHabits(true);
         try {
-            const suggested = await suggestHabitsForGoals(goals);
+            const suggested = await suggestHabitsForGoals(goals, knowledgeBase.map(k => k.content));
             const newHabits: Habit[] = suggested.map((s, index) => ({
                 id: `suggested-h-${Date.now()}-${index}`,
                 name: s.name || 'New Habit',
@@ -367,7 +377,7 @@ const App: React.FC = () => {
     const handleSuggestQuests = async () => {
         setIsSuggestingQuests(true);
         try {
-            const suggested = await suggestQuests(goals, habits);
+            const suggested = await suggestQuests(goals, habits, knowledgeBase.map(k => k.content));
             const newQuests: Quest[] = suggested.map((q, index) => ({
                 id: `q-${Date.now()}-${index}`,
                 ...q,
@@ -462,6 +472,7 @@ const App: React.FC = () => {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             <Progress avatar={avatar} />
+                            <KnowledgeBase items={knowledgeBase} onAdd={handleAddKnowledge} onRemove={handleRemoveKnowledge} />
                         </div>
                     </div>
                 )}

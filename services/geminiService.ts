@@ -24,7 +24,7 @@ const habitSchema = {
     required: ["name", "description"],
 };
 
-export const suggestHabitsForGoals = async (goals: Goal[], audience?: string): Promise<Partial<Habit>[]> => {
+export const suggestHabitsForGoals = async (goals: Goal[], knowledgeBase: string[], audience?: string): Promise<Partial<Habit>[]> => {
     if (!process.env.GEMINI_API_KEY) {
         console.error("Gemini API key is not configured.");
         return [
@@ -34,13 +34,15 @@ export const suggestHabitsForGoals = async (goals: Goal[], audience?: string): P
     }
 
     const goalDescriptions = goals.map(g => `- ${g.name}: ${g.description}`).join('\n');
+    const knowledgeDescriptions = knowledgeBase.map(k => `- ${k}`).join('\n');
+    const knowledgeSection = knowledgeDescriptions ? `\nUser Knowledge:\n${knowledgeDescriptions}\n` : '';
     const target = audience?.trim() || 'the user';
 
     const prompt = `
 Based on the following long-term goals, suggest 3-5 new daily or weekly habits that would help ${target} achieve them.
 The habits should be specific, actionable, and small enough to be incorporated into a daily routine.
 Avoid suggesting habits they might already be doing. Focus on creative or supportive habits.
-
+${knowledgeSection}
 Goals:
 ${goalDescriptions}
 
@@ -105,7 +107,7 @@ const questSchema = {
     required: ["title", "description", "reward", "type"],
 };
 
-export const suggestQuests = async (goals: Goal[], habits: Habit[], audience?: string): Promise<Omit<Quest, 'id' | 'completed'>[]> => {
+export const suggestQuests = async (goals: Goal[], habits: Habit[], knowledgeBase: string[], audience?: string): Promise<Omit<Quest, 'id' | 'completed'>[]> => {
     if (!process.env.GEMINI_API_KEY) {
         console.error("Gemini API key is not configured.");
         return [];
@@ -113,6 +115,8 @@ export const suggestQuests = async (goals: Goal[], habits: Habit[], audience?: s
 
     const goalDescriptions = goals.map(g => `- ${g.name}`).join('\n');
     const habitDescriptions = habits.map(h => `- ${h.name}`).join('\n');
+    const knowledgeDescriptions = knowledgeBase.map(k => `- ${k}`).join('\n');
+    const knowledgeSection = knowledgeDescriptions ? `\nUser Knowledge:\n${knowledgeDescriptions}\n` : '';
     const target = audience?.trim() || 'the user';
 
     const prompt = `
@@ -120,7 +124,7 @@ Based on the following long-term goals and daily habits, suggest 2-3 unique, one
 A quest should be a specific, short-term challenge that pushes them slightly beyond their routine to accelerate progress.
 For example, if a goal is 'Learn a new skill', a quest could be 'Complete a 2-hour tutorial on the topic'.
 Avoid suggesting things that are already listed as habits.
-
+${knowledgeSection}
 Goals:
 ${goalDescriptions}
 
