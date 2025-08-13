@@ -349,6 +349,14 @@ const App: React.FC = () => {
         setKnowledgeBase(prev => [...prev, { id: `kb-${Date.now()}`, content }]);
     }, [setKnowledgeBase]);
 
+    const handleUpdateKnowledge = useCallback((updated: KnowledgeItem) => {
+        setKnowledgeBase(prev => prev.map(k => k.id === updated.id ? updated : k));
+    }, [setKnowledgeBase]);
+
+    const handleDeleteKnowledge = useCallback((id: string) => {
+        setKnowledgeBase(prev => prev.filter(k => k.id !== id));
+    }, [setKnowledgeBase]);
+
     // --- AI Suggestions ---
     const handleSuggestHabits = async () => {
         setIsSuggestingHabits(true);
@@ -468,7 +476,12 @@ const App: React.FC = () => {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             <Progress avatar={avatar} />
-                            <KnowledgeBase items={knowledgeBase} onAdd={handleAddKnowledge} />
+                            <KnowledgeBase
+                                items={knowledgeBase}
+                                onAdd={handleAddKnowledge}
+                                onUpdate={handleUpdateKnowledge}
+                                onDelete={handleDeleteKnowledge}
+                            />
                         </div>
                     </div>
                 )}
