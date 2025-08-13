@@ -599,10 +599,7 @@ const App: React.FC = () => {
                 </button>
                 <button
                     onClick={() => setActiveTab('progress')}
-     className={`flex-1 flex flex-col items-center gap-0 py-0.5 text-[10px] focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'progress' ? 'text-white' : ''}`}
-
-                    className={`flex-1 flex flex-col items-center gap-1 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'progress' ? 'text-white' : ''}`}
-
+                    className={`flex-1 flex flex-col items-center gap-0 py-0.5 text-[10px] focus:outline-none focus:ring-2 focus:ring-cyan-500 ${activeTab === 'progress' ? 'text-white' : ''}`}
                     aria-label="Progress"
                     aria-current={activeTab === 'progress' ? 'page' : undefined}
                 >
