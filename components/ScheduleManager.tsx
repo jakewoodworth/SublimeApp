@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { TimeBlock, TimeBlockType } from '../types';
 import QuestCard from './QuestCard';
 import { CalendarDaysIcon, PlusIcon, TrashIcon, XMarkIcon, CheckCircleIcon, StarIcon, PencilIcon } from './IconComponents';
