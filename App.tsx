@@ -93,8 +93,8 @@ const App: React.FC = () => {
     const [isSuggestingQuests, setIsSuggestingQuests] = useState<boolean>(false);
     const [activeQuestId, setActiveQuestId] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'habits' | 'goals' | 'schedule' | 'quests' | 'progress'>('progress');
-    // Audience description for AI suggestions
-    const [suggestionAudience, setSuggestionAudience] = useState<string>('');
+    // Knowledge base for AI suggestions
+    const [knowledgeBase, setKnowledgeBase] = useState<string>('');
 
     // --- Experience & Leveling ---
     const addExperience = useCallback((xp: number) => {
@@ -348,7 +348,7 @@ const App: React.FC = () => {
     const handleSuggestHabits = async () => {
         setIsSuggestingHabits(true);
         try {
-            const suggested = await suggestHabitsForGoals(goals, suggestionAudience);
+            const suggested = await suggestHabitsForGoals(goals, knowledgeBase);
             const newHabits: Habit[] = suggested.map((s, index) => ({
                 id: `suggested-h-${Date.now()}-${index}`,
                 name: s.name || 'New Habit',
@@ -368,7 +368,7 @@ const App: React.FC = () => {
     const handleSuggestQuests = async () => {
         setIsSuggestingQuests(true);
         try {
-            const suggested = await suggestQuests(goals, habits, suggestionAudience);
+            const suggested = await suggestQuests(goals, habits, knowledgeBase);
             const newQuests: Quest[] = suggested.map((q, index) => ({
                 id: `q-${Date.now()}-${index}`,
                 ...q,
@@ -453,13 +453,13 @@ const App: React.FC = () => {
                 {activeTab === 'progress' && (
                     <>
                         <div className="mb-8">
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Suggestions for</label>
-                            <input
-                                type="text"
-                                value={suggestionAudience}
-                                onChange={e => setSuggestionAudience(e.target.value)}
-                                placeholder="the user"
+                            <label className="block text-sm font-medium text-gray-300 mb-1">AI Knowledge Base</label>
+                            <textarea
+                                value={knowledgeBase}
+                                onChange={e => setKnowledgeBase(e.target.value)}
+                                placeholder="Add context or notes for better suggestions"
                                 className="w-full md:w-1/2 bg-gray-800 border border-gray-700 rounded-md py-2 px-3 text-white"
+                                rows={3}
                             />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
