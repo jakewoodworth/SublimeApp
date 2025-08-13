@@ -6,9 +6,10 @@ type Tab = 'habits' | 'goals' | 'schedule' | 'quests' | 'progress';
 interface HeaderProps {
     activeTab: Tab;
     onTabChange: (tab: Tab) => void;
+    sublimePoints: number;
 }
 
-const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
+const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange, sublimePoints }) => {
     return (
         <header
             style={{ paddingTop: 'calc(env(safe-area-inset-top, 0) + 0.75rem)' }}
@@ -17,6 +18,10 @@ const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
             <div className="flex items-center gap-2 md:gap-3">
                 <RocketIcon className="w-7 h-7 md:w-8 md:h-8 text-cyan-400" />
                 <h1 className="text-xl md:text-3xl font-bold font-orbitron text-white">SublimeQuest</h1>
+                <div className="bg-yellow-400/10 border border-yellow-400/50 text-yellow-300 text-xs md:text-sm font-semibold px-2 py-0.5 md:px-3 md:py-1 rounded-full flex items-center gap-1 md:gap-2">
+                    <span>{sublimePoints}</span>
+                    <span className="text-yellow-500">SP</span>
+                </div>
             </div>
             <nav className="hidden md:flex gap-6 text-gray-300">
                 <button

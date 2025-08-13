@@ -464,16 +464,11 @@ const App: React.FC = () => {
             <Header
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
+                sublimePoints={sublimePoints}
             />
             <main className="p-4 md:p-8 max-w-7xl mx-auto pb-24">
                 {activeTab === 'progress' && (
                     <div className="mb-8">
-                        <div className="flex justify-end mb-4">
-                            <div className="bg-yellow-400/10 border border-yellow-400/50 text-yellow-300 text-base md:text-lg font-semibold px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center gap-2">
-                                <span>{sublimePoints}</span>
-                                <span className="text-yellow-500">SP</span>
-                            </div>
-                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             <Progress avatar={avatar} />
                             <KnowledgeBase
