@@ -1,3 +1,5 @@
-if (typeof globalThis.structuredClone !== 'function') {
-  (globalThis as any).structuredClone = (value: unknown) => JSON.parse(JSON.stringify(value));
+
+if (typeof (window as any).structuredClone !== 'function') {
+  (window as any).structuredClone = (value: unknown) => JSON.parse(JSON.stringify(value));
+ main
 }
