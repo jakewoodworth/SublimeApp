@@ -10,6 +10,7 @@ import BreathingExercise from './components/BreathingExercise';
 import { suggestHabitsForGoals, suggestQuests } from './services/geminiService';
 import KnowledgeBase from './components/KnowledgeBase';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import { fetchKnowledgeItems, insertKnowledgeItem, updateKnowledgeItem, deleteKnowledgeItem } from './services/supabaseClient';
 
 // --- Helpers ---
 const getTodayString = () =>
@@ -90,7 +91,15 @@ const App: React.FC = () => {
     const [timeBlocksByDate, setTimeBlocksByDate] = useLocalStorage<Record<string, TimeBlock[]>>('sublime_schedules', INITIAL_TIME_BLOCKS);
     const [quests, setQuests] = useLocalStorage<Quest[]>('sublime_quests', INITIAL_QUESTS);
     const [knowledgeBase, setKnowledgeBase] = useLocalStorage<KnowledgeItem[]>('sublime_knowledge_base', []);
-    
+
+    useEffect(() => {
+        fetchKnowledgeItems()
+            .then(items => {
+                if (items.length) setKnowledgeBase(items);
+            })
+            .catch(err => console.error('Error fetching knowledge base:', err));
+    }, [setKnowledgeBase]);
+
     const [selectedDate, setSelectedDate] = useState<string>(getTodayString());
     const [isSuggestingHabits, setIsSuggestingHabits] = useState<boolean>(false);
     const [isSuggestingQuests, setIsSuggestingQuests] = useState<boolean>(false);
@@ -345,16 +354,25 @@ const App: React.FC = () => {
         setQuests(prev => prev.filter(q => q.id !== questId));
     }, [setQuests]);
 
-    const handleAddKnowledge = useCallback((content: string) => {
-        setKnowledgeBase(prev => [...prev, { id: `kb-${Date.now()}`, content }]);
+    const handleAddKnowledge = useCallback(async (content: string) => {
+        const newItem = await insertKnowledgeItem(content);
+        if (newItem) {
+            setKnowledgeBase(prev => [...prev, newItem]);
+        }
     }, [setKnowledgeBase]);
 
-    const handleUpdateKnowledge = useCallback((updated: KnowledgeItem) => {
-        setKnowledgeBase(prev => prev.map(k => k.id === updated.id ? updated : k));
+    const handleUpdateKnowledge = useCallback(async (updated: KnowledgeItem) => {
+        const success = await updateKnowledgeItem(updated);
+        if (success) {
+            setKnowledgeBase(prev => prev.map(k => k.id === updated.id ? updated : k));
+        }
     }, [setKnowledgeBase]);
 
-    const handleDeleteKnowledge = useCallback((id: string) => {
-        setKnowledgeBase(prev => prev.filter(k => k.id !== id));
+    const handleDeleteKnowledge = useCallback(async (id: string) => {
+        const success = await deleteKnowledgeItem(id);
+        if (success) {
+            setKnowledgeBase(prev => prev.filter(k => k.id !== id));
+        }
     }, [setKnowledgeBase]);
 
     // --- AI Suggestions ---
