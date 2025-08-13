@@ -11,7 +11,8 @@ import { suggestHabitsForGoals, suggestQuests } from './services/geminiService';
 import { useLocalStorage } from './hooks/useLocalStorage';
 
 // --- Helpers ---
-const getTodayString = () => new Date().toISOString().slice(0, 10);
+const getTodayString = () =>
+    new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
 
 // --- Initial Data ---
 const INITIAL_AVATAR: Avatar = {
