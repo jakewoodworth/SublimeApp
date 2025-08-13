@@ -138,7 +138,10 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ selectedDate, setSele
     const handleDateChange = (days: number) => {
         const currentDate = new Date(selectedDate + 'T00:00:00');
         currentDate.setDate(currentDate.getDate() + days);
-        setSelectedDate(currentDate.toISOString().slice(0, 10));
+        const newDate = currentDate.toLocaleDateString('en-CA', {
+            timeZone: 'America/New_York',
+        });
+        setSelectedDate(newDate);
     };
     
     const openAddModal = () => {
@@ -159,11 +162,21 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ selectedDate, setSele
         }
     }
     
-    const formattedDate = new Date(selectedDate + 'T00:00:00').toLocaleDateString(undefined, {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    const formattedDate = new Date(selectedDate + 'T00:00:00').toLocaleDateString(
+        undefined,
+        {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            timeZone: 'America/New_York',
+        }
+    );
+
+    const today = new Date().toLocaleDateString('en-CA', {
+        timeZone: 'America/New_York',
     });
-    
-    const isToday = selectedDate === new Date().toISOString().slice(0, 10);
+    const isToday = selectedDate === today;
 
     return (
         <div className="space-y-6 scroll-mt-24" id="schedule">
@@ -182,7 +195,20 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ selectedDate, setSele
                 </h2>
                 <div className="flex items-center gap-1 bg-gray-800/50 p-1 rounded-full border border-blue-400/20 text-sm">
                      <button onClick={() => handleDateChange(-1)} className="px-3 py-1 rounded-full hover:bg-gray-700 transition">‹ Prev</button>
-                     {!isToday && <button onClick={() => setSelectedDate(new Date().toISOString().slice(0,10))} className="px-3 py-1 rounded-full hover:bg-gray-700 transition text-cyan-300">Today</button>}
+                     {!isToday && (
+                        <button
+                            onClick={() =>
+                                setSelectedDate(
+                                    new Date().toLocaleDateString('en-CA', {
+                                        timeZone: 'America/New_York',
+                                    })
+                                )
+                            }
+                            className="px-3 py-1 rounded-full hover:bg-gray-700 transition text-cyan-300"
+                        >
+                            Today
+                        </button>
+                    )}
                      <span className="font-semibold text-center w-24 md:w-auto px-2">{isToday ? "Today" : selectedDate}</span>
                      <button onClick={() => handleDateChange(1)} className="px-3 py-1 rounded-full hover:bg-gray-700 transition">Next ›</button>
                 </div>
