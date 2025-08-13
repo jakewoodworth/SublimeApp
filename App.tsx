@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import type { Avatar, Goal, Habit, Milestone, TimeBlock, Quest } from './types';
+import type { Avatar, Goal, Habit, TimeBlock, Quest } from './types';
 import Header from './components/Header';
 import Progress from './components/Progress';
 import HabitTracker from './components/HabitTracker';
